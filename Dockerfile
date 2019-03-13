@@ -11,5 +11,4 @@ RUN echo '<marquee>Homer Web Page!</marquee>' \
 
 EXPOSE 80
 
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
-CMD ["-h"]
+WORKDIR /var/www/html
