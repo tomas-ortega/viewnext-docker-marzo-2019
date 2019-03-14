@@ -11,4 +11,8 @@ RUN echo '<marquee>Homer Web Page!</marquee>' \
 
 VOLUME [ "/my-nginx-data" ]
 
+ADD filetocontainer1.txt /my-files/
+
+COPY filetocontainer2.txt /my-files/
+
 EXPOSE 80
