@@ -1,0 +1,119 @@
+version: '3.7'
+
+services:
+  nginx1:
+    image: nginx
+    container_name: nginx1
+    ports:
+      - "80:80"
+    networks:
+      red_guay:
+    environment:
+      - DATABASE_HOST=pako
+    volumes:
+      - pakito_volume:/usr/share/nginx/html
+    restart: always
+    depends_on:
+      - pako
+    extra_hosts:
+      - "server5:8.8.8.8"
+
+  pako:
+    build:
+      context: ./pako
+    image: gandalf0000/pako
+    container_name: nginx2
+    ports:
+      - "81:80"
+    networks:
+      red_guay:
+    volumes:
+      - pakito_volume:/usr/share/nginx/html
+    depends_on:
+      - juanito
+
+
+  juanito:
+    build:
+      context: ./juanito
+    image: gandalf0000/juanito
+    container_name: nginx3
+    ports:
+      - "82:80"
+    networks:
+      red_piltrafa:
+        ipv4_address: 172.24.200.7
+      red_guay:
+    volumes:
+      - ./pakito-volume:/usr/share/nginx/html
+      - pakito_volume:/la-que-has-liao
+    working_dir: /etc
+    command:
+      "ls"
+
+  pepito:
+    build:
+      context: ./pako
+    image: gandalf0000/pepito
+    ports:
+      - "83:80"
+    networks:
+      red_guay:
+    depends_on:
+      - juanito
+    labels:
+      - "VERSION=1.0.0"
+      - "SYSTEM NAME=BlueHat"
+      - "MAILTO: info@viewnext.com"
+
+  cadvisor:
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    ports:
+      - "8080:8080"
+    container_name: cadvisor
+    image: google/cadvisor:latest
+
+  portainer:
+    ports:
+      - "9000:9000"
+    container_name: portainer
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock 
+      - portainer_volume:/data 
+    image: portainer/portainer
+
+volumes:
+  nginx1_volume:
+    external: true
+    name: nginx1_volume
+
+  pakito_volume:
+    external: true
+    name: pakito_volume
+
+  portainer_volume:
+    external: true
+    name: portainer_volume
+
+networks:
+  red_guay:
+    name: red_guay
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.23.200.0/24
+
+  red_piltrafa:
+    name: red_piltrafa
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.24.200.0/24
